@@ -1,0 +1,59 @@
+
+/*全局配置开始*/
+body {
+    font-size: 10px;
+    font-family: 微软雅黑;
+}
+
+.box {
+    width: 100%;
+}
+
+/*banner开始*/
+.box .banner {
+    height: 100px;
+    position: relative;
+}
+
+.box .banner .title {
+    width: 1200px;
+    height: 60px;
+    position: absolute;
+    left: 50px;
+    top: 12px;
+    font-size: 40px;
+    font-weight: 700;
+}
+
+/*banner结束*/
+
+/*content开始*/
+.box .content {
+    height: 644px;
+}
+
+.box .content .left_menu {
+    width: 10%;
+    float: left;
+}
+
+.box .content .right_content {
+    width: 90%;
+    float: left;
+}
+
+.mp_magin_left_20{
+    margin-left: 20px;
+}
+
+.mp_left_menu_title{
+    height: 30px;
+    width: 100%;
+    background-color:#FF5722;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+}
+/*content结束*/
+

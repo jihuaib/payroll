@@ -1,0 +1,73 @@
+/*初始化css样式开始*/
+*{
+    margin: 0;
+    padding: 0;
+}
+
+/*初始化css样式结束*/
+
+
+/*常用字体颜色开始*/
+.color_1{
+    color: #FF5722;
+}
+
+.color_2{
+    color: #009688;
+}
+
+.color_3{
+    color:#393D49;
+}
+
+.color_4{
+    color:#1E9FFF;
+}
+
+.color_5{
+    color:#F7B824;
+}
+
+.color_6{
+    color:#FF5722;
+}
+
+.color_7{
+    color:#01AAED;
+}
+
+.color_8{
+    color:#2F4056;
+}
+
+/*常用字体颜色结束*/
+
+.bg_color_1{
+    background-color: #fbfbfb;
+}
+
+/*常用背景颜色开始*/
+.bg_color_2{
+    background-color: #f2f2f2;
+}
+
+.bg_color_3{
+    background-color: #eeeeee;
+}
+
+.bg_color_4{
+    background-color: #e2e2e2;
+}
+
+.bg_color_5{
+    background-color: #dddddd;
+}
+
+.bg_color_6{
+    background-color: #d2d2d2;
+}
+
+.bg_color_7{
+    background-color: #c2c2c2;
+}
+/*常用背景颜色结束*/

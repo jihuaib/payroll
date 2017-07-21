@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.muping.payroll.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.muping.payroll.domain.Message">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="TIMESTAMP"/>
+
+        <association column="send_id" property="send" javaType="LoginInfo" select="com.muping.payroll.mapper.LoginInfoMapper.selectByPrimaryKey"/>
+        <association column="receive_id" property="receive" javaType="LoginInfo" select="com.muping.payroll.mapper.LoginInfoMapper.selectByPrimaryKey"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from `message`
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.muping.payroll.domain.Message" useGeneratedKeys="true" keyProperty="id">
+        insert into `message` (send_id, receive_id, title,
+        content, date)
+        values (#{send.id,jdbcType=BIGINT}, #{receive.id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP})
+    </insert>
+
+    <sql id="base_column">
+        id, send_id, receive_id, title, content, date
+    </sql>
+
+    <sql id="where_sql">
+        <where>
+            <choose>
+                <when test="state==0">
+                    and (send_id = #{currentUserId} or receive_id= #{currentUserId})
+                </when>
+                <when test="state==1">
+                    and (send_id = #{currentUserId})
+                </when>
+                <when test="state==2">
+                    and (receive_id= #{currentUserId})
+                </when>
+                <otherwise>
+
+                </otherwise>
+            </choose>
+        </where>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="base_column"/>
+        from `message`
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Long">
+      select count(id) from message <include refid="where_sql"/>;
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        select <include refid="base_column"/>
+        from message <include refid="where_sql"/> limit #{startIndex},#{pageSize}
+    </select>
+
+</mapper>

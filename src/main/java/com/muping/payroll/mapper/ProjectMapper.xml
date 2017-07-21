@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.muping.payroll.mapper.ProjectMapper">
+    <resultMap id="BaseResultMap" type="com.muping.payroll.domain.Project">
+        <id column="id" property="id" javaType="java.lang.Long"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP"/>
+        <result column="end_date" property="endDate" jdbcType="TIMESTAMP"/>
+        <association column="employee_id" property="employee" javaType="Employee"
+                     select="com.muping.payroll.mapper.EmployeeMapper.selectByPrimaryKey"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from `project`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.muping.payroll.domain.Project" useGeneratedKeys="true" keyProperty="id">
+        insert into `project` (name, count, state,
+        begin_date, end_date, employee_id
+        )
+        values (#{name,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},
+        #{beginDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{employee.id,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.muping.payroll.domain.Project">
+        update `project`
+        set name = #{name,jdbcType=VARCHAR},
+        count = #{count,jdbcType=INTEGER},
+        state = #{state,jdbcType=INTEGER},
+        begin_date = #{beginDate,jdbcType=TIMESTAMP},
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+        employee_id = #{employee.id,jdbcType=BIGINT}
+        where id = #{id}
+    </update>
+
+    <sql id="base_column">
+        id, name, count, state, begin_date, end_date, employee_id
+    </sql>
+
+    <sql id="where_sql">
+        <where>
+            <if test="realKeyword!=null">
+                and `name` like concat('%',#{keyword},'%')
+            </if>
+            <if test="realCount!=-1">
+                and `count` &lt;= #{realCount}
+            </if>
+            <if test="state!=-1">
+                and `state` = #{state}
+            </if>
+            <if test="employeeId!=-1">
+                and `employee_id` = #{employeeId }
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"  parameterType="java.lang.Long">
+        select
+        <include refid="base_column"/>
+        from `project`
+        where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="base_column"/>
+        from `project`
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(id) from `project` <include refid="where_sql"/>
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        select <include refid="base_column"/>
+        from `project` <include refid="where_sql"/> limit #{startIndex},#{pageSize}
+    </select>
+
+</mapper>

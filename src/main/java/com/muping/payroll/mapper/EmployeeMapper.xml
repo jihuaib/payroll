@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.muping.payroll.mapper.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="com.muping.payroll.domain.Employee">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="bank" property="bank" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="pay_method" property="payMethod" jdbcType="INTEGER"/>
+        <result column="user_type" property="userType" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="email_state" property="emailState" jdbcType="INTEGER"/>
+        <result column="month_salary" property="monthSalary" jdbcType="DECIMAL"/>
+        <result column="hour_salary" property="hourSalary" jdbcType="DECIMAL"/>
+        <result column="entrust_salary" property="entrustSalary" jdbcType="DECIMAL"/>
+        <collection property="roles" ofType="Role" column="id" select="com.muping.payroll.mapper.RoleMapper.queryByEmployeeId"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from `employee`
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteRoleRalation">
+        delete from employee_role where employee_id=#{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.muping.payroll.domain.Employee">
+        insert into `employee` (bank,address,email_state,id,user_name,real_name, email, phone,
+        pay_method, user_type, state,
+        month_salary, hour_salary, entrust_salary
+        )
+        values (#{bank},#{address},#{emailState},#{id},#{userName},#{realName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+        #{payMethod,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},
+        #{monthSalary,jdbcType=DECIMAL}, #{hourSalary,jdbcType=DECIMAL}, #{entrustSalary,jdbcType=DECIMAL}
+        )
+    </insert>
+
+    <insert id="handlerRelationWithRole">
+        insert into employee_role(employee_id,role_id)
+        values(#{employee_id},#{role_id})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.muping.payroll.domain.Employee">
+        update `employee`
+        set real_name = #{realName,jdbcType=VARCHAR},
+        user_name = #{userName,jdbcType=VARCHAR},
+        bank = #{bank,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        email = #{email,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=VARCHAR},
+        pay_method = #{payMethod,jdbcType=INTEGER},
+        user_type = #{userType,jdbcType=INTEGER},
+        state = #{state,jdbcType=INTEGER},
+        email_state = #{emailState,jdbcType=INTEGER},
+        month_salary = #{monthSalary,jdbcType=DECIMAL},
+        hour_salary = #{hourSalary,jdbcType=DECIMAL},
+        entrust_salary = #{entrustSalary,jdbcType=DECIMAL}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <sql id="base_column">
+        id, email_state,user_name,real_name, email, phone, pay_method, user_type, state, month_salary, hour_salary,
+        entrust_salary,bank,address
+    </sql>
+
+    <sql id="where_sql">
+        <where>
+            <if test="userType!=-1">
+                and user_type=#{userType}
+            </if>
+            <if test="state!=-1">
+                and state=#{state}
+            </if>
+            <if test="payMethod!=-1">
+                and pay_method=#{payMethod}
+            </if>
+            <if test="realKeyword!=null">
+                and (user_name like concat('%',#{keyword},'%') or real_name like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select <include refid="base_column"/>
+        from `employee`
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="base_column"/>
+        from `employee`
+    </select>
+
+    <select id="queryCount" resultType="java.lang.Long">
+        select count(id)
+        from employee <include refid="where_sql"/>
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        select <include refid="base_column"/>
+        from employee <include refid="where_sql"/>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryByEmail" resultType="java.lang.Long">
+        select count(id) from employee where email=#{email}
+    </select>
+
+    <sql id="where_report_sql">
+        <where>
+            <if test="employeeId!=-1">
+                and id=#{employeeId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="queryReportCount" resultType="java.lang.Long">
+        select count(id) from employee <include refid="where_report_sql"/>
+    </select>
+
+    <select id="queryReportList" resultMap="BaseResultMap">
+        select <include refid="base_column"/>
+        from employee <include refid="where_report_sql"/>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryAllWorkHours" resultType="java.lang.Long">
+        SELECT
+        sum(`count`)
+        FROM
+        project
+        where employee_id=#{id}
+        GROUP BY
+        employee_id;
+    </select>
+
+</mapper>

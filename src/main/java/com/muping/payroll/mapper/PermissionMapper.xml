@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.muping.payroll.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.muping.payroll.domain.Permission">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="expression" property="expression" jdbcType="VARCHAR"/>
+        <result column="des" property="des" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.muping.payroll.domain.Permission" useGeneratedKeys="true" keyProperty="id">
+        insert into `permission` (expression, des)
+        values (#{expression,jdbcType=VARCHAR}, #{des,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteAll">
+        DELETE FROM permission
+    </delete>
+
+    <sql id="base_column">
+        id,expression,des
+    </sql>
+
+    <select id="queryCount" resultType="java.lang.Long">
+        SELECT count(id)
+        FROM permission
+    </select>
+
+    <select id="queryList" resultType="com.muping.payroll.domain.Permission">
+        SELECT
+        <include refid="base_column"/>
+        FROM permission
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="queryByRoleId" resultType="com.muping.payroll.domain.Permission">
+        select <include refid="base_column"/>
+        from permission
+        where id
+        in (select permission_id from role_permission where role_id=#{id})
+    </select>
+
+    <select id="selectAll" resultType="com.muping.payroll.domain.Permission">
+        select <include refid="base_column"/>
+        from permission
+    </select>
+
+    <select id="queryByExpression" resultType="com.muping.payroll.domain.Permission">
+        select <include refid="base_column"/>
+        from permission
+        where expression=#{expression}
+    </select>
+
+    <select id="queryAllPermissionsCurUser" resultType="com.muping.payroll.domain.Permission">
+        SELECT
+        <include refid="base_column"/>
+        FROM
+        permission p
+        LEFT JOIN role_permission rp ON p.id = rp.permission_id
+        WHERE
+        rp.role_id IN (
+        SELECT
+        er.role_id
+        FROM
+        employee_role er
+        WHERE
+        er.employee_id = #{id}
+        )
+    </select>
+
+</mapper>

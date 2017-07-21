@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.muping.payroll.mapper.TimecardMapper" >
+  <resultMap id="BaseResultMap" type="com.muping.payroll.domain.Timecard" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <association column="employee_id" property="employee" javaType="Employee" select="com.muping.payroll.mapper.EmployeeMapper.selectByPrimaryKey"/>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.muping.payroll.domain.Timecard" useGeneratedKeys="true" keyProperty="id" >
+    insert into `timecard` (state,begin_date, end_date,
+      employee_id)
+    values (#{state},#{beginDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP},
+      #{employee.id,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.muping.payroll.domain.Timecard" >
+    update `timecard`
+    set begin_date = #{beginDate,jdbcType=TIMESTAMP},
+    state=#{state},
+      end_date = #{endDate,jdbcType=TIMESTAMP},
+      employee_id = #{employeeId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <sql id="base_column">
+    id, state, begin_date, end_date, employee_id
+  </sql>
+
+  <sql id="where_sql">
+    <where>
+      <if test="employeeId!=-1">
+        and employee_id=#{employeeId}
+      </if>
+    </where>
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="base_column"/>
+    from `timecard`
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="base_column"/>
+    from `timecard`
+  </select>
+
+  <select id="queryCount" resultType="java.lang.Long">
+    select count(id) from timecard <include refid="where_sql"/>
+  </select>
+
+  <select id="queryList" resultMap="BaseResultMap">
+    select <include refid="base_column"/>
+    from timecard <include refid="where_sql"/> limit #{startIndex},#{pageSize}
+  </select>
+
+  <select id="findExsistTimecardCurrentTime" resultMap="BaseResultMap">
+    select <include refid="base_column"/> from timecard where employee_id=#{id} and (#{date}&gt;=begin_date) and (#{date}&lt;=end_date)
+  </select>
+
+  <select id="findEnableTimecard" resultMap="BaseResultMap">
+    select <include refid="base_column"/> from timecard where `state`=#{state}
+  </select>
+
+</mapper>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PayRoll-用户登录</title>
+
+    <link rel="icon" href="images/logo.ico">
+
+    <link rel="stylesheet" href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/mp_common.css">
+    <link rel="stylesheet" href="css/login.css">
+    <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.js"></script>
+    <script type="text/javascript" src="js/jquery-form.js"></script>
+    <script type="text/javascript" src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/commom/login.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            //ajax登录
+            $("#login_form").ajaxForm({
+                dataType:"json",
+                success:function (data) {
+                    if(data.success){
+                        layer.msg("登陆成功！");
+                        window.location.href="index.do"
+                    }else{
+                        layer.msg(data.message);
+                    }
+                }
+            })
+        });
+    </script>
+
+</head>
+
+<body>
+<div class="box">
+
+    <!--头部部分开始-->
+    <div class="title color_2">
+        <!--http://placehold.it/70x70-->
+        <img src="images/logo.jpg">
+        <span>PayRoll-工资管理系统</span>
+    </div>
+    <!--头部部分结束-->
+
+    <!--登录box开始-->
+    <div class="login_box bg_color_2">
+        <h3 style="padding-left: 40px;" class="color_7">用户登录</h3>
+        <form id="login_form" method="post" action="/login.do">
+            <div class="form-group">
+                <label for="userName"><span class="glyphicon glyphicon-user">用户名</span></label>
+                <input type="text" class="form-control" id="userName" name="userName" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="password"><span class="glyphicon glyphicon-lock">密码</span></label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="请输入密码">
+            </div>
+            <button type="submit" class="btn btn-warning form-control" style="margin-top: 5px" id="show_error">登录</button>
+        </form>
+        <div style="padding-right: 40px;margin-top: 20px;float: right"><a href="#">忘记密码?</a></div>
+    </div>
+    <!--登录box结束-->
+
+</div>
+
+</body>
+</html>
